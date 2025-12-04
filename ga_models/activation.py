@@ -1,12 +1,11 @@
 import numpy as np
 
-
+# returns the probability
 def softmax(z):
     return np.exp(z) / np.sum(np.exp(z))
 
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
-
 
 def tanh(z):
     return np.tanh(z)

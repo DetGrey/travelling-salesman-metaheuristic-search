@@ -21,10 +21,12 @@ class SimpleModel(GAModel):
             if not i == 0:
                 x = tanh(x)
             x = x @ layer
-        return softmax(x)
+        return softmax(x) # returns all output options with a total of 1.0 
+        # (4 in the snake game - each direction)
+        # For ours probably 10 or 9 (options for the next destination)
 
     def action(self, obs: Sequence):
-        return self.update(obs).argmax()
+        return self.update(obs).argmax() # chooses the output with most probability
     
     def get_tour(self, obs: Sequence) -> list:
         """
@@ -46,13 +48,22 @@ class SimpleModel(GAModel):
             self.DNA[random_layer][row][col] = random.uniform(-0.1, 0.1) # Small nudge - TODO why
 
     def __add__(self, other):
+        # We are creating a new "Brain" (Neural Network)
         baby = SimpleModel(dims=self.dims)
         baby.DNA = []
+
+        # 'mom_layer' and 'dad_layer' are NOT lists of cities (e.g., [0, 5, 2]).
+        # They are matrices of numbers (weights) that decide HOW to think.
         for mom_layer, dad_layer in zip(self.DNA, other.DNA):
+            
+            # We are swapping pieces of "intelligence," not pieces of the map.
+            # It is impossible to "double visit" a city here because 
+            # there are no city IDs in these variables.
             if random.random() > 0.5:
                 baby.DNA.append(mom_layer.copy())
             else:
                 baby.DNA.append(dad_layer.copy())
+                
         return baby
 
     def DNA(self):
